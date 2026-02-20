@@ -111,7 +111,9 @@ export class Box2dPhysics implements IPhysics {
   createMarble(id: number, x: number, y: number, isTarget: boolean = false): void {
     const circleShape = new this.Box2D.b2CircleShape();
     
-    circleShape.set_m_radius(isTarget ? 0.18 : 0.25);
+    // ⭐️ 1. 물리적 크기 극단적 축소 (0.25 -> 0.08)
+    // 장애물(핀)에 아예 닿지 않고 허공을 가르듯 스르륵 빠져나가게 만듭니다.
+    circleShape.set_m_radius(isTarget ? 0.08 : 0.25);
 
     const bodyDef = new this.Box2D.b2BodyDef();
     bodyDef.set_type(this.Box2D.b2_dynamicBody);
@@ -119,14 +121,16 @@ export class Box2dPhysics implements IPhysics {
 
     const body = this.world.CreateBody(bodyDef);
     
-    const density = isTarget ? 15.0 : 1.0 + Math.random();
+    // ⭐️ 2. 밀도(무게) 100배 증가
+    // 크기가 작아져서 남들에게 치이는 걸 막기 위해 압도적인 무게를 줍니다. 길을 막는 공은 다 튕겨 나갑니다.
+    const density = isTarget ? 100.0 : 1.0 + Math.random();
     const fixture = body.CreateFixture(circleShape, density);
     
     if (isTarget) {
-      fixture.SetRestitution(0.0);
-      fixture.SetFriction(0.0);
+      fixture.SetRestitution(0.0); // 튕기면서 허비하는 시간 0
+      fixture.SetFriction(0.0);    // 마찰 없이 얼음판처럼 미끄러짐
     } else {
-      fixture.SetRestitution(0.4);
+      fixture.SetRestitution(0.4); 
     }
 
     body.SetAwake(false);
