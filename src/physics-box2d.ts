@@ -108,19 +108,26 @@ export class Box2dPhysics implements IPhysics {
     this.entities = [];
   }
 
-  createMarble(id: number, x: number, y: number, gravityScale: number = 1.0): void {
+  createMarble(id: number, x: number, y: number, isTarget: boolean = false): void {
     const circleShape = new this.Box2D.b2CircleShape();
-    circleShape.set_m_radius(0.25);
+    circleShape.set_m_radius(isTarget ? 0.16 : 0.25);
 
     const bodyDef = new this.Box2D.b2BodyDef();
     bodyDef.set_type(this.Box2D.b2_dynamicBody);
     bodyDef.set_position(new this.Box2D.b2Vec2(x, y));
 
     const body = this.world.CreateBody(bodyDef);
-    body.CreateFixture(circleShape, 1 + Math.random());
+    const fixture = body.CreateFixture(circleShape, 1 + Math.random());
+    
+    if (isTarget) {
+      fixture.SetRestitution(0.0);
+      fixture.SetFriction(0.0);
+    } else {
+      fixture.SetRestitution(0.4); 
+    }
+
     body.SetAwake(false);
     body.SetEnabled(false);
-    body.SetGravityScale(gravityScale);
     this.marbleMap[id] = body;
   }
 
