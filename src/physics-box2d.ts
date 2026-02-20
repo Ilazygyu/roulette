@@ -110,7 +110,8 @@ export class Box2dPhysics implements IPhysics {
 
   createMarble(id: number, x: number, y: number, isTarget: boolean = false): void {
     const circleShape = new this.Box2D.b2CircleShape();
-    circleShape.set_m_radius(0.25);
+    
+    circleShape.set_m_radius(isTarget ? 0.19 : 0.25);
 
     const bodyDef = new this.Box2D.b2BodyDef();
     bodyDef.set_type(this.Box2D.b2_dynamicBody);
@@ -120,12 +121,10 @@ export class Box2dPhysics implements IPhysics {
     const fixture = body.CreateFixture(circleShape, 1 + Math.random());
     
     if (isTarget) {
-      fixture.SetRestitution(0.8);
-      fixture.SetFriction(0.5);
-      body.SetGravityScale(0.6);
+      fixture.SetRestitution(0.1);
+      fixture.SetFriction(0.0);
     } else {
       fixture.SetRestitution(0.4);
-      body.SetGravityScale(1.0);
     }
 
     body.SetAwake(false);
