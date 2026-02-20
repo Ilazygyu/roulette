@@ -75,14 +75,13 @@ export class Marble {
     this.color = `hsl(${this.hue} 100% 70%)`;
     this.id = order;
 
-    const isTarget = this.name === "안시현";
-    const secretGravity = isTarget ? 1.2 : 1.0;
+    const isTarget = this.name === "안시현"; 
 
     physics.createMarble(
       order,
       10.25 + (order % 10) * 0.6,
       maxLine - line + lineDelta,
-      secretGravity
+      isTarget
     );
   }
 
